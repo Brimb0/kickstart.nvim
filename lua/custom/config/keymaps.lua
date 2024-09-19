@@ -26,7 +26,13 @@ vim.keymap.set('n', '<C-a>', 'gg<S-v>G', { desc = 'Select all text' })
 -- Q is very grief in neovim
 vim.keymap.set('v', 'Q', '<nop>', { desc = 'Disable Q' })
 
-vim.keymap.set('n', 'x', '_x', { desc = 'Never Yank after deleting a character with x (Normal Mode)' })
-vim.keymap.set('n', 'X', '_X', { desc = 'Never Yank after deleting a character with X (Normal Mode)' })
-vim.keymap.set('v', 'x', '_x', { desc = 'Never Yank after deleting a character with x (Visual Mode)' })
-vim.keymap.set('v', 'X', '_X', { desc = 'Never Yank after deleting a character with X (Visual Mode)' })
+-- Yank Modifications
+-- vim.keymap.set('n', 'x', '_x', { desc = 'Never Yank after deleting a character with x (Normal Mode)' })
+-- vim.keymap.set('n', 'X', '_X', { desc = 'Never Yank after deleting a character with X (Normal Mode)' })
+-- vim.keymap.set('v', 'x', '_x', { desc = 'Never Yank after deleting a character with x (Visual Mode)' })
+-- vim.keymap.set('v', 'X', '_X', { desc = 'Never Yank after deleting a character with X (Visual Mode)' })
+
+-- Tabs
+vim.keymap.set('n', 'te', ':tabedit', { desc = 'Edit tab layout' })
+vim.keymap.set('n', '<tab>', ':tabnext<Return>', { desc = 'Go to next tab' })
+vim.keymap.set('n', '<s-tab>', ':tabprev<Return>', { desc = 'Go to previous tab' })

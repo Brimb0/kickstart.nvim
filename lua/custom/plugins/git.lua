@@ -1,5 +1,6 @@
 return {
   {
+    -- TODO: Setup Lazy Git
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {

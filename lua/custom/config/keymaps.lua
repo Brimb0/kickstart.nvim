@@ -11,12 +11,12 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Move selected line / block of text in visual mode
-vim.keymap.set('x', '<A-j>', ":move '>+1<CR>gv-gv", { desc = 'Move text down by 1 line', silent = true })
-vim.keymap.set('x', '<A-k>', ":move '<-2<CR>gv-gv", { desc = 'Move text up by 1 line', silent = true })
+vim.keymap.set('x', '<C-j>', ":move '>+1<CR>gv-gv", { desc = 'Move text down by 1 line', silent = true })
+vim.keymap.set('x', '<C-k>', ":move '<-2<CR>gv-gv", { desc = 'Move text up by 1 line', silent = true })
 
 -- Move current line of text in normal mode
-vim.keymap.set('n', '<A-j>', "V :move '>+1<CR>gv-gv", { desc = 'Move text down by 1 line', silent = true })
-vim.keymap.set('n', '<A-k>', "V :move '<-2<CR>gv-gv", { desc = 'Move text up by 1 line', silent = true })
+vim.keymap.set('n', '<C-j>', "V :move '>+1<CR>gv-gv", { desc = 'Move text down by 1 line', silent = true })
+vim.keymap.set('n', '<C-k>', "V :move '<-2<CR>gv-gv", { desc = 'Move text up by 1 line', silent = true })
 
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Go down further', silent = true })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Go up further', silent = true })

@@ -17,9 +17,9 @@ return {
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       'nvim-java/nvim-java',
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+      { 'hrsh7th/cmp-nvim-lsp' },
+
       { 'j-hui/fidget.nvim', opts = {} },
-      'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
@@ -131,7 +131,7 @@ return {
 
   -- Completion
   { -- Autocompletion
-    dir = '~/.config/programming/neovim-projects/nvim-cmp',
+    'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source

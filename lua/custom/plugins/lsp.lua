@@ -12,15 +12,23 @@ return {
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs and related tools to stdpath for Neovim
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       'nvim-java/nvim-java',
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
       'hrsh7th/cmp-nvim-lsp',
     },
+    -- opts = {
+    --   servers = {
+    --     jdtls = {},
+    --   },
+    --   setup = {
+    --     jdtls = function()
+    --       require('java').setup {}
+    --     end,
+    --   },
+    -- },
     config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
@@ -92,6 +100,7 @@ return {
       local servers = {
         -- clangd = {},
 
+        jdtls = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -121,7 +130,6 @@ return {
           end,
           jdtls = function()
             require('java').setup {}
-
             require('lspconfig').jdtls.setup {}
           end,
         },
@@ -132,37 +140,26 @@ return {
   -- Completion
   { -- Autocompletion
     dir = '~/.config/programming/neovim-projects/nvim-cmp',
+    lazy = false,
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
         'L3MON4D3/LuaSnip',
-        build = (function()
-          -- Build Step is needed for regex support in snippets.
-          -- This step is not supported in many windows environments.
-          -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
+        build = 'make install_jsregexp',
         dependencies = {
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
+          'rafamadriz/friendly-snippets',
+          config = function()
+            require('luasnip.loaders.from_vscode').lazy_load()
+          end,
           -- },
         },
       },
       'saadparwaiz1/cmp_luasnip',
-
-      -- Adds other completion capabilities.
-      --  nvim-cmp does not ship with all sources by default. They are split
-      --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
     },
@@ -170,17 +167,24 @@ return {
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
-      luasnip.config.setup {}
-
+      local helper = require 'custom.utils.cmp-helper'
+      local select = { behavior = cmp.SelectBehavior.Select }
       cmp.setup {
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
+        completion = { completeopt = 'menu,menuone,noinsert', keyword_length = 3 },
         experimental = { ghost_text = true },
-        view = { entries = { name = 'custom', vertical_positioning = 'above' } },
+        performance = { max_view_entries = 5 },
+        formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
+          format = function(entry, vim_item)
+            return helper.handle_format(entry, vim_item)
+          end,
+        },
+        view = { entries = { name = 'custom', selection_order = 'near_cursor', vertical_positioning = 'above' } },
         mapping = cmp.mapping.preset.insert {
           -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -189,11 +193,24 @@ return {
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
-          ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<Tab>'] = cmp.mapping.select_next_item(),
-          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          -- ['<CR>'] = cmp.mapping.confirm { select = true },
+          -- ['<Tab>'] = cmp.mapping.select_next_item(),
+          -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          --
+          -- ['<C-Space>'] = cmp.mapping.complete {},
 
+          ['<C-u>'] = cmp.mapping.select_prev_item(select),
+          ['<C-d>'] = cmp.mapping.select_next_item(select),
           ['<C-Space>'] = cmp.mapping.complete {},
+          ['<CR>'] = cmp.mapping(function(fallback)
+            helper.handle_confirm(fallback)
+          end),
+          ['<Tab>'] = vim.schedule_wrap(function(fallback)
+            helper.handle_tab(fallback)
+          end),
+          ['<S-Tab>'] = vim.schedule_wrap(function(fallback)
+            helper.handle_stab(fallback)
+          end),
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
